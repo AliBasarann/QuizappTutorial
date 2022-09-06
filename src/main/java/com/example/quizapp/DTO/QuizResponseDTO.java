@@ -9,5 +9,4 @@ import java.util.Set;
 public class QuizResponseDTO {
     private long id;
     private String question;
-    private Set<AnswerResponseDTO> answers;
 }

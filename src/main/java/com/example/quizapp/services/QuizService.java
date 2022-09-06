@@ -1,11 +1,12 @@
 package com.example.quizapp.services;
 
 import com.example.quizapp.DTO.*;
+import com.example.quizapp.mapper.QuizMapper;
 import com.example.quizapp.models.Answer;
 import com.example.quizapp.models.Quiz;
 import com.example.quizapp.repositories.AnswerRepository;
 import com.example.quizapp.repositories.QuizRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -13,38 +14,31 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class QuizService {
 
     private final QuizRepository quizRepository;
     private final AnswerRepository answerRepository;
-    @Autowired
-    public QuizService( QuizRepository quizRepository, AnswerRepository answerRepository){
-        this.quizRepository = quizRepository ;
-        this.answerRepository = answerRepository;
-    }
+    private final QuizMapper quizMapper;
 
-    public Quiz dtoToQuiz(QuizCreationDTO quizDto){
-        Quiz quiz = new Quiz();
-        quiz.setQuestion(quizDto.getQuestion());
-        return quiz;
+    @Transactional
+    public QuizResponseDTO create(QuizCreationDTO quizInsertDTO) {
+        Quiz quiz = Quiz.builder()
+                .question(quizInsertDTO.getQuestion())
+                .build();
+        quiz = quizRepository.save(quiz);
+        for (AnswerCreationDTO answerInsertDTO : quizInsertDTO.getAnswers()) {
+            Answer answer = Answer.builder()
+                    .answer(answerInsertDTO.getAnswer())
+                    .quiz(quiz)
+                    .build();
+            answerRepository.save(answer);
+        }
+        return quizMapper.map(quiz);
     }
-
-    public AnswerResponseDTO answerToDto(Answer answer){
-        AnswerResponseDTO dto = new AnswerResponseDTO();
-        dto.setAnswer(answer.getAnswer());
-        dto.setId(answer.getId());
-        return dto;
-    }
-
-    public void create(Quiz quiz) {
-        quizRepository.save(quiz);
-        System.out.println(quiz.toString() + "is successfully added");
-    }
-
     public QuizResponseDTO quizToResponseDTO(Quiz quiz){
         QuizResponseDTO quizDto = new QuizResponseDTO();
         quizDto.setQuestion(quiz.getQuestion());
-        quizDto.setAnswers(quiz.getAnswers().stream().map(this::answerToDto).collect(Collectors.toSet()));
         quizDto.setId(quiz.getId());
         return quizDto;
     }

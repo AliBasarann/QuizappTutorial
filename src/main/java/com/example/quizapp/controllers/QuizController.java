@@ -21,8 +21,7 @@ public class QuizController {
 
         @PostMapping
         public void create(@RequestBody QuizCreationDTO quizDto){
-            Quiz quiz = quizService.dtoToQuiz(quizDto);
-            quizService.create(quiz);
+            quizService.create(quizDto);
         }
         /*
         @PostMapping

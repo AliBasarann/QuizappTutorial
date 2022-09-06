@@ -14,8 +14,8 @@ public class UserConfig {
     CommandLineRunner commandLineRunner2(UserRepository repository){
         return args ->{
             if (repository.count() == 0) {
-                User first = new User("name1", "surname1", "email1", "password1");
-                User second = new User("name2", "surname2", "email2", "password2");
+                User first = new User("username1", "password1", "name1", "surname1", "email1" );
+                User second = new User("username2", "password2",  "name2", "surname2", "email2" );
                 repository.saveAll(List.of(first, second));
             }
         };

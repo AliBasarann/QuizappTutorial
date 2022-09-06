@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UserCreationDTO {
+    private String username;
     private String name;
     private String lastName;
     @NotNull
