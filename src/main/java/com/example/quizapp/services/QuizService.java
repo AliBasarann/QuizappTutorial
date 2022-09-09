@@ -56,9 +56,8 @@ public class QuizService {
     public void edit(long id, QuizEditDTO quizDto) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() ->new IllegalStateException("There is no quiz with id "+ id));
-        if(quizDto.getQuestion() != null  && !Objects.equals(quizDto.getQuestion(), quiz.getQuestion())){
-            quiz.setQuestion(quizDto.getQuestion());
-        }
+        quizMapper.merge(quiz, quizDto);
+        quizRepository.save(quiz);
 
         System.out.println("Quiz is successfully edited");
     }
